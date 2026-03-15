@@ -31,7 +31,13 @@
 /***********************************************************************
 * local Variable
 ***********************************************************************/
-
+// Beispieldaten
+var tableData = [
+    {id:1, name:"Web-App Alpha", progress:100, status:"Abgeschlossen", date:"01.01.2024"},
+    {id:2, name:"E-Commerce Shop", progress:45, status:"In Arbeit", date:"15.02.2024"},
+    {id:3, name:"Portfolio Design", progress:15, status:"Geplant", date:"20.03.2024"},
+    {id:4, name:"Datenbank Migration", progress:80, status:"Testphase", date:"05.01.2024"},
+];
 /***********************************************************************
 * Constant
 ***********************************************************************/
@@ -45,6 +51,33 @@ const sections = document.querySelectorAll('.content-section');
 
 // --- 4. Untermenü (Akkordeon) ---
 const submenuButtons = document.querySelectorAll('.submenu-btn');
+
+/***********************************************************************
+*! \fn          initTable()
+*  \brief       only init
+*  \param       none
+*  \exception   none
+*  \return      none
+***********************************************************************/
+function initTable() {
+    // Nur initialisieren, wenn noch nicht geschehen
+    if (!table) {
+        table = new Tabulator("#example-table", {
+            data: tableData,
+            layout: "fitColumns",
+            placeholder: "Lade Daten...",
+            columns: [
+                {title:"Projektname", field:"name", widthGrow:2},
+                {title:"Fortschritt", field:"progress", formatter:"progress", sorter:"number"},
+                {title:"Status", field:"status", hozAlign:"center"},
+            ],
+        });
+    } else {
+        // Wenn sie schon existiert, nur neu zeichnen
+        setTimeout(() => { table.redraw(true); }, 50);
+    }
+}
+
 /***********************************************************************
 *! \fn          function updateClock()
 *  \brief       Uhrzeit & Datum
@@ -84,15 +117,26 @@ navLinks.forEach(link => {
         
         const targetId = link.getAttribute('data-target');
 
+        // --- HIGHLIGHT LOGIK ---
+        // 1. Entferne die aktive Klasse von allen Links
+        navLinks.forEach(l => l.classList.remove('active-link'));
+        // 2. Füge sie dem aktuell geklickten Link hinzu
+        link.classList.add('active-link');
+
         // 1. Alle Sektionen verstecken
         sections.forEach(sec => sec.classList.remove('active'));
 
         // 2. Ziel-Sektion anzeigen
-        document.getElementById(targetId).classList.add('active');
+        document.getElementById(targetId).classList.add('active')
 
         // 3. Auf Mobile: Sidebar nach Klick schließen
         if (window.innerWidth <= 500) {
             sidebar.classList.remove('active');
+        }
+
+         // KRITISCH: Wenn die Tabelle sichtbar wird, muss Tabulator das Layout neu berechnen
+        if(targetId === "Example1") {
+            console.log("draw");
         }
     });
 });
@@ -114,3 +158,24 @@ submenuButtons.forEach(button => {
         parent.classList.toggle('open');
     });
 });
+
+
+/***********************************************************************
+*! \fn          navLinks.forEach
+*  \brief       Tabelle erstellen
+*  \param       none
+*  \exception   none
+*  \return      none
+***********************************************************************/
+var table = new Tabulator("#example-table", {
+    height:"311px",
+    columns:[
+    {title:"Name", field:"name"},
+    {title:"Progress", field:"progress", sorter:"number"},
+    {title:"Gender", field:"gender"},
+    {title:"Rating", field:"rating"},
+    {title:"Favourite Color", field:"col"},
+    {title:"Date Of Birth", field:"dob", hozAlign:"center"},
+    ],
+});
+
