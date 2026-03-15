@@ -8,6 +8,8 @@
 *  \brief                   Basis CSS
 ***********************************************************************-->
 
+<script type="text/javascript" src="https://unpkg.com/tabulator-tables@6.4.0/dist/js/tabulator.min.js"></script>
+
 <link rel="stylesheet" href="style.css">
 
     <header class="main-header">
@@ -26,13 +28,21 @@
         <aside id="sidebar" class="sidebar">
             <nav>
                 <ul class="nav-list">
-                    <li><a href="#" class="nav-link" data-target="home">Startseite</a></li>
+                    <li><a href="#" class="nav-link active-link" data-target="home">Startseite</a></li>
                     
                     <li class="has-submenu">
-                        <button class="submenu-btn">Leistungen ▾</button>
+                        <button class="submenu-btn">Leistungen</button>
                         <ul class="submenu">
                             <li><a href="#" class="nav-link" data-target="design">Design</a></li>
                             <li><a href="#" class="nav-link" data-target="coding">Coding</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="has-submenu">
+                        <button class="submenu-btn">Table</button>
+                        <ul class="submenu">
+                            <li><a href="#" class="nav-link" data-target="Example1">Example1</a></li>
+                            <li><a href="#" class="nav-link" data-target="Example1">Example2</a></li>
                         </ul>
                     </li>
 
@@ -45,6 +55,11 @@
             <section id="home" class="content-section active">
                 <h2>Willkommen</h2>
                 <p>Das ist die Startseite.</p>
+            </section>
+
+            <section id="Example1" class="content-section">
+                <p style="margin-bottom: 20px;">Diese Tabelle wurde mit Tabulator.io erstellt:</p>
+                <div id="example-table"></div>
             </section>
 
             <section id="design" class="content-section">
