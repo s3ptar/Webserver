@@ -1,11 +1,11 @@
 /***********************************************************************
-*! \file:                   main.cpp
-*  \projekt:                USB_HID
-*  \created on:             2023 09 01
+*! \file:                   javascript
+*  \projekt:                Basic Webiseite
+*  \created on:             2026 03 15
 *  \author:                 R. Gräber
 *  \version:                0
 *  \history:                -
-*  \brief
+*  \brief                   Basis CSS
 ***********************************************************************/
 
 /***********************************************************************
@@ -15,7 +15,7 @@
 /***********************************************************************
 * Informations
 ***********************************************************************/
-////https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_summary
+
 /***********************************************************************
 * Declarations
 ***********************************************************************/
@@ -35,59 +35,82 @@
 /***********************************************************************
 * Constant
 ***********************************************************************/
-
-/***********************************************************************
-* Local Funtions
-***********************************************************************/
-
-// --- 1. Echtzeit-Uhr und Datum ---
-function updateClock() {
-    const now = new Date();
-    
-    // Optionen für die Formatierung
-    const options = { 
-        day: '2-digit', 
-        month: '2-digit', 
-        year: 'numeric',
-        hour: '2-digit', 
-        minute: '2-digit', 
-        second: '2-digit' 
-    };
-    
-    // In das span-Element schreiben
-    const timeString = now.toLocaleString('de-DE', options);
-    document.getElementById('datetime').textContent = timeString;
-}
-
-// Jede Sekunde aktualisieren
-setInterval(updateClock, 1000);
-updateClock(); // Erstaufruf beim Laden
-
-
-// --- 2. Sidebar Toggle (Mobile) ---
+// --- 2. Sidebar Toggle ---
 const menuToggle = document.getElementById('menu-toggle');
 const sidebar = document.getElementById('sidebar');
 
+// --- 3. Content Umschalten (SPA Logik) ---
+const navLinks = document.querySelectorAll('.nav-link');
+const sections = document.querySelectorAll('.content-section');
+
+// --- 4. Untermenü (Akkordeon) ---
+const submenuButtons = document.querySelectorAll('.submenu-btn');
+/***********************************************************************
+*! \fn          function updateClock()
+*  \brief       Uhrzeit & Datum
+*  \param       none
+*  \exception   none
+*  \return      none
+***********************************************************************/
+function updateClock() {
+    const now = new Date();
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    document.getElementById('datetime').textContent = now.toLocaleString('de-DE', options);
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/***********************************************************************
+*! \fn          addEventListener
+*  \brief       Sidebar Toggle
+*  \param       none
+*  \exception   none
+*  \return      none
+***********************************************************************/
 menuToggle.addEventListener('click', () => {
     sidebar.classList.toggle('active');
 });
 
+/***********************************************************************
+*! \fn          navLinks.forEach
+*  \brief       Content Umschalten (SPA Logik)
+*  \param       none
+*  \exception   none
+*  \return      none
+***********************************************************************/
+navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault(); // Verhindert das Springen der Seite
+        
+        const targetId = link.getAttribute('data-target');
 
-// --- 3. Untermenü (Akkordeon) Logik ---
-const submenuButtons = document.querySelectorAll('.submenu-btn');
+        // 1. Alle Sektionen verstecken
+        sections.forEach(sec => sec.classList.remove('active'));
 
+        // 2. Ziel-Sektion anzeigen
+        document.getElementById(targetId).classList.add('active');
+
+        // 3. Auf Mobile: Sidebar nach Klick schließen
+        if (window.innerWidth <= 500) {
+            sidebar.classList.remove('active');
+        }
+    });
+});
+
+
+/***********************************************************************
+*! \fn          navLinks.forEach
+*  \brief       CUntermenü (Akkordeon)
+*  \param       none
+*  \exception   none
+*  \return      none
+***********************************************************************/
 submenuButtons.forEach(button => {
     button.addEventListener('click', () => {
         const parent = button.parentElement;
-
-        // Alle anderen Menüs schließen
         document.querySelectorAll('.has-submenu').forEach(item => {
-            if (item !== parent) {
-                item.classList.remove('open');
-            }
+            if (item !== parent) item.classList.remove('open');
         });
-
-        // Das aktuelle Menü umschalten
         parent.classList.toggle('open');
     });
 });
