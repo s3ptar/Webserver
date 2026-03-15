@@ -39,7 +39,7 @@ from pathlib import Path
 # local Variable
 #####################################################################"""
 logger = logging.getLogger(__name__)
-app = Flask(__name__)
+app = Flask(__name__, template_folder="../../WebSite/html", static_folder="../../WebSite/static")
 default_config = {}
 """#####################################################################
 # Constant
@@ -55,19 +55,20 @@ default_config = {}
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template("main.html")
 
-@app.route('/static/css/<path:path>')
-def send_css(path):
-    return send_from_directory('static/css', path)
 
-@app.route('/static/html/<path:path>')
-def send_html(path):
-    return send_from_directory('static/html', path)
+#@app.route('/static/css/<path:path>')
+#def send_css(path):
+#    return send_from_directory('static/css', path)
 
-@app.route('/static/js/<path:path>')
-def send_js(path):
-    return send_from_directory('static/js', path)
+#@app.route('/static/html/<path:path>')
+#def send_html(path):
+#    return send_from_directory('static/html', path)
+
+#@app.route('/static/js/<path:path>')
+#def send_js(path):
+#    return send_from_directory('static/js', path)
 
 """#####################################################################
 #! @fn           init_app()
@@ -132,3 +133,4 @@ def init_app():
 if __name__ == '__main__':
     log = init_app()
     log.info("Starting $__name__")
+    app.run(debug=True)

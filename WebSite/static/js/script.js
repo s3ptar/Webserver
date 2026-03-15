@@ -136,6 +136,7 @@ navLinks.forEach(link => {
 
          // KRITISCH: Wenn die Tabelle sichtbar wird, muss Tabulator das Layout neu berechnen
         if(targetId === "Example1") {
+			table.redraw(true);
             console.log("draw");
         }
     });
