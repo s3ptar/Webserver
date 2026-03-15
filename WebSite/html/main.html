@@ -8,79 +8,89 @@
 *  \brief                   Basis CSS
 ***********************************************************************-->
 
-<script type="text/javascript" src="https://unpkg.com/tabulator-tables@6.4.0/dist/js/tabulator.min.js"></script>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebProjekt Highlight Fix</title>
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@6.4.0/dist/js/tabulator.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-<link rel="stylesheet" href="style.css">
 
-    <header class="main-header">
-        <div class="header-left">
-            <button id="menu-toggle" class="toggle-btn">☰ Menü</button>
-        </div>
-        <div class="header-center">
-            <h1>WebProjekt</h1>
-        </div>
-        <div class="header-right">
-            <span id="datetime">Lade...</span>
-        </div>
-    </header>
+	<header class="main-header">
+		<div class="header-left">
+			<button id="menu-toggle" class="toggle-btn">☰ Menü</button>
+		</div>
+		<div class="header-center">
+			<h1>WebProjekt</h1>
+		</div>
+		<div class="header-right">
+			<span id="datetime">Lade...</span>
+		</div>
+	</header>
 
-    <div class="main-container">
-        <aside id="sidebar" class="sidebar">
-            <nav>
-                <ul class="nav-list">
-                    <li><a href="#" class="nav-link active-link" data-target="home">Startseite</a></li>
-                    
-                    <li class="has-submenu">
-                        <button class="submenu-btn">Leistungen</button>
-                        <ul class="submenu">
-                            <li><a href="#" class="nav-link" data-target="design">Design</a></li>
-                            <li><a href="#" class="nav-link" data-target="coding">Coding</a></li>
-                        </ul>
-                    </li>
+	<div class="main-container">
+		<aside id="sidebar" class="sidebar">
+			<nav>
+				<ul class="nav-list">
+					<li><a href="#" class="nav-link active-link" data-target="home">Startseite</a></li>
+					
+					<li class="has-submenu">
+						<button class="submenu-btn">Leistungen</button>
+						<ul class="submenu">
+							<li><a href="#" class="nav-link" data-target="design">Design</a></li>
+							<li><a href="#" class="nav-link" data-target="coding">Coding</a></li>
+						</ul>
+					</li>
 
-                    <li class="has-submenu">
-                        <button class="submenu-btn">Table</button>
-                        <ul class="submenu">
-                            <li><a href="#" class="nav-link" data-target="Example1">Example1</a></li>
-                            <li><a href="#" class="nav-link" data-target="Example1">Example2</a></li>
-                        </ul>
-                    </li>
+					<li class="has-submenu">
+						<button class="submenu-btn">Table</button>
+						<ul class="submenu">
+							<li><a href="#" class="nav-link" data-target="Example1">Example1</a></li>
+							<li><a href="#" class="nav-link" data-target="Example1">Example2</a></li>
+						</ul>
+					</li>
 
-                    <li><a href="#" class="nav-link" data-target="kontakt">Kontakt</a></li>
-                </ul>
-            </nav>
-        </aside>
+					<li><a href="#" class="nav-link" data-target="kontakt">Kontakt</a></li>
+				</ul>
+			</nav>
+		</aside>
 
-        <main class="content">
-            <section id="home" class="content-section active">
-                <h2>Willkommen</h2>
-                <p>Das ist die Startseite.</p>
-            </section>
+		<main class="content">
+			<section id="home" class="content-section active">
+				<h2>Willkommen</h2>
+				<p>Das ist die Startseite.</p>
+			</section>
 
-            <section id="Example1" class="content-section">
-                <p style="margin-bottom: 20px;">Diese Tabelle wurde mit Tabulator.io erstellt:</p>
-                <div id="example-table"></div>
-            </section>
+			<section id="Example1" class="content-section">
+				<p style="margin-bottom: 20px;">Diese Tabelle wurde mit Tabulator.io erstellt:</p>
+				<div id="example-table"></div>
+			</section>
 
-            <section id="design" class="content-section">
-                <h2>Design Leistungen</h2>
-                <p>Hier erfährst du alles über unsere Design-Prozesse.</p>
-            </section>
+			<section id="design" class="content-section">
+				<h2>Design Leistungen</h2>
+				<p>Hier erfährst du alles über unsere Design-Prozesse.</p>
+			</section>
 
-            <section id="coding" class="content-section">
-                <h2>Coding & Entwicklung</h2>
-                <p>Wir programmieren moderne Web-Apps.</p>
-            </section>
+			<section id="coding" class="content-section">
+				<h2>Coding & Entwicklung</h2>
+				<p>Wir programmieren moderne Web-Apps.</p>
+			</section>
 
-            <section id="kontakt" class="content-section">
-                <h2>Kontakt</h2>
-                <p>Schreibe uns eine E-Mail!</p>
-            </section>
-        </main>
-    </div>
+			<section id="kontakt" class="content-section">
+				<h2>Kontakt</h2>
+				<p>Schreibe uns eine E-Mail!</p>
+			</section>
+		</main>
+	</div>
 
-    <footer class="main-footer">
-        <p>&copy; 2026 Mein Webprojekt</p>
-    </footer>
+	<footer class="main-footer">
+		<p>&copy; 2026 Mein Webprojekt</p>
+	</footer>
 
-    <script src="script.js"></script>
+	<script src="script.js"></script>
+</body>
+</html>
