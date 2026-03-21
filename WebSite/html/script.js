@@ -1,0 +1,299 @@
+/***********************************************************************
+*! \file:                   javascript.js
+*  \projekt:                webserial
+*  \created on:             2023 10 15
+*  \author:                 R. Gräber
+*  \version:                0
+*  \history:                -
+*  \brief
+***********************************************************************/
+
+
+/***********************************************************************
+* Includes
+***********************************************************************/
+
+/***********************************************************************
+* Informations
+***********************************************************************/
+//https://www.dyclassroom.com/c/c-pointers-and-two-dimensional-array
+/***********************************************************************
+* Declarations
+***********************************************************************/
+
+
+/***********************************************************************
+* Constant
+***********************************************************************/
+
+
+/***********************************************************************
+* Global Variable
+***********************************************************************
+// --- 2. Sidebar Toggle ---
+const menuToggle = document.getElementById('menu-toggle');
+const sidebar = document.getElementById('sidebar');
+
+// --- 3. Content Umschalten (SPA Logik) ---
+const navLinks = document.querySelectorAll('.nav-link');
+const sections = document.querySelectorAll('.content-section');
+
+// --- 4. Untermenü (Akkordeon) ---
+const submenuButtons = document.querySelectorAll('.submenu-btn');*/
+menuToggle = document.getElementById('menu-toggle');
+sidebar = document.getElementById('sidebar');
+
+// --- 3. Content Umschalten (SPA Logik) ---
+navLinks = document.querySelectorAll('.nav-link');
+sections = document.querySelectorAll('.content-section');
+
+// --- 4. Untermenü (Akkordeon) ---
+submenuButtons = document.querySelectorAll('.submenu-btn');
+/***********************************************************************
+* local Variable
+***********************************************************************/
+// Beispieldaten
+var tableData = [
+    {id:1, name:"Web-App Alpha", progress:100, status:"Abgeschlossen", date:"01.01.2024"},
+    {id:2, name:"E-Commerce Shop", progress:45, status:"In Arbeit", date:"15.02.2024"},
+    {id:3, name:"Portfolio Design", progress:15, status:"Geplant", date:"20.03.2024"},
+    {id:4, name:"Datenbank Migration", progress:80, status:"Testphase", date:"05.01.2024"},
+];
+
+/***********************************************************************
+* Constant
+***********************************************************************/
+
+/***********************************************************************
+* Local Funtions
+***********************************************************************/
+
+/***********************************************************************
+*! \fn          initTable()
+*  \brief       only init
+*  \param       none
+*  \exception   none
+*  \return      none
+***********************************************************************/
+function initTable() {
+    // Nur initialisieren, wenn noch nicht geschehen
+    if (typeof table  !== 'undefined') {
+        console.log("init tabel");
+        table = new Tabulator("#example-table", {
+            data: tableData,
+            layout: "fitColumns",
+            placeholder: "Lade Daten...",
+            columns: [
+                {title:"Projektname", field:"name", widthGrow:2},
+                {title:"Fortschritt", field:"progress", formatter:"progress", sorter:"number"},
+                {title:"Status", field:"status", hozAlign:"center"},
+            ],
+        });
+        //table.redraw(true);
+    } else {
+        // Wenn sie schon existiert, nur neu zeichnen
+        setTimeout(() => { table.redraw(true); }, 50);
+    }
+}
+
+/***********************************************************************
+*! \fn          function updateClock()
+*  \brief       Uhrzeit & Datum
+*  \param       none
+*  \exception   none
+*  \return      none
+***********************************************************************/
+function updateClock() {
+    const now = new Date();
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    document.getElementById('datetime').textContent = now.toLocaleString('de-DE', options);
+}
+
+
+
+ 
+ /***********************************************************************
+*! \fn          function Start(status)
+*  \brief       AFTER PAGE LOADS CALL YOUR SCRIPTS HERE
+*  \param       status - status from page load dunction
+*  \exception   none
+*  \return      none
+***********************************************************************/   
+function Start(status) {
+
+    init_site();
+
+    setInterval(updateClock, 1000);
+
+ 
+    
+}
+
+
+/***********************************************************************
+*! \fn          page load
+*  \brief       JAVASCRIPT PAGE LOADER
+*  \author      Stokely Web Page loader, 2022
+*  \param       none
+*  \exception   none
+*  \return      status from loaded page
+***********************************************************************/ 
+if (document.readyState) {
+
+    if (document.readyState === "complete" || document.readyState === "loaded") {
+
+        Start("Browser Loader : Document : readyState : complete");
+
+    } else {
+       if (window.addEventListener) {
+
+            // Never try and call 'DOMContentLoaded' unless the web page is still in an early loading state.
+            if (document.readyState === 'loading' || document.readyState === 'uninitialized') {
+                window.addEventListener('DOMContentLoaded', function () {
+
+                // Most modern browsers will have the DOM ready after this state.
+                if (document.readyState === "interactive") {
+                    Start("Browser Loader : Document : DOMContentLoaded : interactive");
+
+                    } else if (document.readyState === "complete" || document.readyState === "loaded") {
+                        Start("Browser Loader : Document : DOMContentLoaded : complete");
+                    } else {
+                        Start("Browser Loader : Document : DOMContentLoaded : load");
+                    }
+                }, false);
+            } else {
+// FALLBACK LOADER : If the readyState is late or unknown, go ahead and try and wait for a full page load event. Note: This function below was required for Internet Explorer 9-10 to work because of non-support of some readyState values! IE 4-9 only supports a "readyState" of "complete".
+                if (document.readyState === 'complete' || document.readyState === "loaded") {
+                    Start("Browser Loader : Document : readyState : complete");
+                } else {
+                    window.addEventListener('load', function () {
+                        Start('Browser Loader : Window : Event : load');
+                    }, false);
+                }
+            }
+        // If 'addEventListener' is not be supported in the browser, try the 'onreadystate' event. Some browsers like IE have poor support for 'addEventListener'.
+        } else {
+            // Note: document.onreadystatechange may have limited support in some browsers.
+            if (document.onreadystatechange) {
+                document.onreadystatechange = function () {
+                    if (document.readyState === "complete" || document.readyState === "loaded"){
+                        Start("Browser Loader : Document : onreadystatechange : complete");
+                    } 
+                    // OPTIONAL: Because several versions of Internet Explorer do not support "interactive" or get flagged poorly, avoid this call when possible.
+                    //else if (document.readyState === "interactive") {
+                    //Start("Browser Loader : Document : onreadystatechange : interactive");
+                    //}
+                }
+            } else {
+            // Note: Some browsers like IE 3-8 may need this more traditional version of the loading script if they fail to support "addeventlistener" or "onready             state". "window.load" is a very old and very reliable page loader you should always fall back on.
+                window.onload = function() {
+                    Start("Browser Loader : Window : window.onload (2)");
+                };
+            }
+        }
+    }
+} else {
+    // LEGACY FALLBACK LOADER. If 'document.readyState' is not supported, use 'window.load'. It has wide support in very old browsers as well as all modern ones.     Browsers Firefox 1-3.5, early Mozilla, Opera < 10.1, old Safari, and some IE browsers do not fully support 'readyState' or its values. "window.load" is a very     old and very reliable page loader you should always fall back on.
+    window.onload = function () {
+        Start("Browser Loader : Window : window.onload (1)");
+    };
+}
+
+
+/***********************************************************************
+*! \fn          navLinks.forEach
+*  \brief       Tabelle erstellen
+*  \param       none
+*  \exception   none
+*  \return      none
+***********************************************************************/
+function init_site(){
+	
+	// --- 2. Sidebar Toggle ---
+    menuToggle = document.getElementById('menu-toggle');
+	
+	/***********************************************************************
+	*  \brief       EventListener menuToggle
+	***********************************************************************/
+	
+	menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+	});
+    sidebar = document.getElementById('sidebar');
+
+    // --- 3. Content Umschalten (SPA Logik) ---
+    navLinks = document.querySelectorAll('.nav-link');
+    sections = document.querySelectorAll('.content-section');
+
+    // --- 4. Untermenü (Akkordeon) ---
+    submenuButtons = document.querySelectorAll('.submenu-btn');
+	
+	table = new Tabulator("#example-table", {
+    data: tableData,
+        layout: "fitColumns",
+        placeholder: "Lade Daten...",
+        columns: [
+            {title:"Projektname", field:"name", widthGrow:2},
+            {title:"Fortschritt", field:"progress", formatter:"progress", sorter:"number"},
+            {title:"Status", field:"status", hozAlign:"center"},
+        ],
+	});
+	
+	
+
+
+
+	/***********************************************************************
+	*  \brief       EventListener submenu
+	***********************************************************************/
+	
+	submenuButtons.forEach(button => {
+		button.addEventListener('click', () => {
+			const parent = button.parentElement;
+			document.querySelectorAll('.has-submenu').forEach(item => {
+				if (item !== parent) item.classList.remove('open');
+			});
+			parent.classList.toggle('open');
+		});
+	});
+	
+	/***********************************************************************
+	*  \brief       navLinks menuToggle
+	***********************************************************************/
+	navLinks.forEach(link => {
+		link.addEventListener('click', (e) => {
+			e.preventDefault(); // Verhindert das Springen der Seite
+        
+			const targetId = link.getAttribute('data-target');
+
+			// --- HIGHLIGHT LOGIK ---
+			// 1. Entferne die aktive Klasse von allen Links
+			navLinks.forEach(l => l.classList.remove('active-link'));
+			// 2. Füge sie dem aktuell geklickten Link hinzu
+			link.classList.add('active-link');
+
+			// 1. Alle Sektionen verstecken
+			sections.forEach(sec => sec.classList.remove('active'));
+
+			// 2. Ziel-Sektion anzeigen
+			document.getElementById(targetId).classList.add('active')
+
+			// 3. Auf Mobile: Sidebar nach Klick schließen
+			if (window.innerWidth <= 500) {
+				sidebar.classList.remove('active');
+			}
+
+			// KRITISCH: Wenn die Tabelle sichtbar wird, muss Tabulator das Layout neu berechnen
+			if(targetId === "Example1") {
+				initTable();
+				console.log("draw");
+			}
+		});
+	});
+	
+}
+
+
+
+/*****************************************************************************************/
+
