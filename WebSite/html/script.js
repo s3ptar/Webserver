@@ -49,6 +49,8 @@ sections = document.querySelectorAll('.content-section');
 
 // --- 4. Untermenü (Akkordeon) ---
 submenuButtons = document.querySelectorAll('.submenu-btn');
+
+ctx = document.getElementById('id_chart_table');
 /***********************************************************************
 * local Variable
 ***********************************************************************/
@@ -73,6 +75,64 @@ var tabellen_daten;
 /***********************************************************************
 * Local Funtions
 ***********************************************************************/
+
+/***********************************************************************
+*! \fn          draw_chart()
+*  \brief       build log table
+*  \param       none
+*  \exception   none
+*  \return      none
+***********************************************************************/
+function draw_chart() {
+
+    //check if canvas in use    
+	
+	if (typeof dataChart !== 'undefined'){
+		dataChart.destroy();
+	}
+		
+	switch (active_section){
+		
+	    case "target_id_chart":{
+            dataChart = new Chart(ctx, {
+			    type: 'bar', // Typ: bar, line, pie, radar, etc.
+				data: {
+					labels: ['Rot', 'Blau', 'Gelb', 'Grün'],
+					datasets: [{
+						label: 'Stimmenanzahl',
+						data: [12, 19, 3, 5],
+						backgroundColor: [
+							'rgba(255, 99, 132, 0.2)',
+							'rgba(54, 162, 235, 0.2)',
+							'rgba(255, 206, 86, 0.2)',
+							'rgba(75, 192, 192, 0.2)'
+						],
+						borderColor: [
+							'rgba(255, 99, 132, 1)',
+							'rgba(54, 162, 235, 1)',
+							'rgba(255, 206, 86, 1)',
+							'rgba(75, 192, 192, 1)'
+						],
+						borderWidth: 1
+					}]
+				},
+				options: {
+					scales: {
+						y: {
+							beginAtZero: true
+						}
+					}
+				}
+			});
+		    break;
+		}
+		default:{
+		}
+	}
+		
+        
+        //setTimeout(() => { data_table.redraw(true); }, 50);
+}
 
 /***********************************************************************
 *! \fn          init_data_table()
@@ -304,7 +364,7 @@ function init_site(){
 	});
 	
 	
-
+	ctx = document.getElementById('id_chart_table').getContext('2d');
 
 
 	/***********************************************************************
@@ -329,6 +389,8 @@ function init_site(){
 			e.preventDefault(); // Verhindert das Springen der Seite
         
 			const targetId = link.getAttribute('data-target');
+			
+			active_section = targetId;
 
 			// --- HIGHLIGHT LOGIK ---
 			// 1. Entferne die aktive Klasse von allen Links
@@ -349,9 +411,14 @@ function init_site(){
 
 			// KRITISCH: Wenn die Tabelle sichtbar wird, muss Tabulator das Layout neu berechnen
 			if(targetId === "target_id_data_table") {
-				active_section = "target_id_data_table";
+				
 				init_data_table();
 				
+			}
+			if(targetId === "target_id_chart") {
+				
+			    draw_chart();
+								
 			}
 		});
 	});
