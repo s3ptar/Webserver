@@ -64,7 +64,7 @@ var tableData = [
 
 var active_section = "";
 var data_table;
-var tablel_data;
+var tabellen_daten;
 
 /***********************************************************************
 * Constant
@@ -83,20 +83,34 @@ var tablel_data;
 ***********************************************************************/
 function init_data_table() {
 
-    if (typeof table  !== 'undefined') {
+    if (typeof data_table  !== 'undefined') {
 		
-        data_table = new Tabulator("#id_data_table", {
-			data: tablel_data,
-			layout: "fitColumns",
-			placeholder: "Lade Daten...",
-			rowHeader:{formatter:"rownum", headerSort:false, hozAlign:"center", resizable:true, frozen:true},
-			columns: [
-				{title:"timestamp", field:"Time", widthGrow:2},
-				{title:"message", field:"message"},
-				{title:"Status", field:"status"},
-			],
-		});
-        //data_table.redraw(true);
+		switch (active_section){
+			
+			case "target_id_data_table":{
+                // load first table data
+				tabellen_daten = [
+					{Time:"2026-01-01", message:"Web-App Alpha",  status:"Abgeschlossen"},
+				];
+				data_table = new Tabulator("#id_data_table", {
+					data: tabellen_daten,
+					layout: "fitColumns",
+					placeholder: "Lade Daten...",
+					rowHeader:{formatter:"rownum", headerSort:false, hozAlign:"center", resizable:true, frozen:true},
+					columns: [
+						{title:"timestamp", field:"Time", widthGrow:2},
+						{title:"message", field:"message"},
+						{title:"Status", field:"status"},
+					],
+				});
+			    break;
+			}
+			default:{
+			}
+		}
+		
+        
+        //setTimeout(() => { data_table.redraw(true); }, 50);
     } else {
         // Wenn sie schon existiert, nur neu zeichnen
         setTimeout(() => { data_table.redraw(true); }, 50);
@@ -118,10 +132,10 @@ function get_periodic_data() {
 			case "target_id_data_table":{
 				console.log("target_id_data_table");
 				// Beispieldaten
-				var tablel_data = [
+				var tabellen_daten = [
 					{Time:new Date().toISOString(), message:"Web-App Alpha",  status:"Abgeschlossen"},
 				];
-				data_table.addRow(tablel_data);
+				data_table.addRow(tabellen_daten);
 			    break;
 			}
 			default:{
@@ -265,10 +279,21 @@ function init_site(){
     // --- 4. Untermenü (Akkordeon) ---
     submenuButtons = document.querySelectorAll('.submenu-btn');
 	
-	//tablel_data
+	//tabellen_daten
 	
 	table = new Tabulator("#id_data_table", {
     data: tableData,
+        layout: "fitColumns",
+        placeholder: "Lade Daten...",
+        columns: [
+            {title:"Projektname", field:"name", widthGrow:2},
+            {title:"Fortschritt", field:"progress", formatter:"progress", sorter:"number"},
+            {title:"Status", field:"status", hozAlign:"center"},
+        ],
+	});
+	
+	data_table = new Tabulator("#id_data_table", {
+		data: tableData,
         layout: "fitColumns",
         placeholder: "Lade Daten...",
         columns: [
@@ -324,9 +349,9 @@ function init_site(){
 
 			// KRITISCH: Wenn die Tabelle sichtbar wird, muss Tabulator das Layout neu berechnen
 			if(targetId === "target_id_data_table") {
-				
-				init_data_table();
 				active_section = "target_id_data_table";
+				init_data_table();
+				
 			}
 		});
 	});
