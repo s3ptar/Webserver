@@ -60,6 +60,12 @@ var tableData = [
     {id:4, name:"Datenbank Migration", progress:80, status:"Testphase", date:"05.01.2024"},
 ];
 
+
+
+var active_section = "";
+var data_table;
+var tablel_data;
+
 /***********************************************************************
 * Constant
 ***********************************************************************/
@@ -69,31 +75,62 @@ var tableData = [
 ***********************************************************************/
 
 /***********************************************************************
-*! \fn          initTable()
-*  \brief       only init
+*! \fn          init_data_table()
+*  \brief       build log table
 *  \param       none
 *  \exception   none
 *  \return      none
 ***********************************************************************/
-function initTable() {
-    // Nur initialisieren, wenn noch nicht geschehen
+function init_data_table() {
+
     if (typeof table  !== 'undefined') {
-        console.log("init tabel");
-        table = new Tabulator("#example-table", {
-            data: tableData,
-            layout: "fitColumns",
-            placeholder: "Lade Daten...",
-            columns: [
-                {title:"Projektname", field:"name", widthGrow:2},
-                {title:"Fortschritt", field:"progress", formatter:"progress", sorter:"number"},
-                {title:"Status", field:"status", hozAlign:"center"},
-            ],
-        });
-        //table.redraw(true);
+		
+        data_table = new Tabulator("#id_data_table", {
+			data: tablel_data,
+			layout: "fitColumns",
+			placeholder: "Lade Daten...",
+			rowHeader:{formatter:"rownum", headerSort:false, hozAlign:"center", resizable:true, frozen:true},
+			columns: [
+				{title:"timestamp", field:"Time", widthGrow:2},
+				{title:"message", field:"message"},
+				{title:"Status", field:"status"},
+			],
+		});
+        //data_table.redraw(true);
     } else {
         // Wenn sie schon existiert, nur neu zeichnen
-        setTimeout(() => { table.redraw(true); }, 50);
+        setTimeout(() => { data_table.redraw(true); }, 50);
     }
+}
+
+
+/***********************************************************************
+*! \fn          get_periodic_data()
+*  \brief       collect data from host
+*  \param       none
+*  \exception   none
+*  \return      none
+***********************************************************************/
+function get_periodic_data() {
+	
+		switch (active_section){
+			
+			case "target_id_data_table":{
+				console.log("target_id_data_table");
+				// Beispieldaten
+				var tablel_data = [
+					{Time:new Date().toISOString(), message:"Web-App Alpha",  status:"Abgeschlossen"},
+				];
+				data_table.addRow(tablel_data);
+			    break;
+			}
+			default:{
+				console.log("nothing to do");
+			}
+						
+		}
+		
+
 }
 
 /***********************************************************************
@@ -124,8 +161,8 @@ function Start(status) {
     init_site();
 
     setInterval(updateClock, 1000);
-
- 
+	
+	setInterval(get_periodic_data, 5000); 
     
 }
 
@@ -228,7 +265,9 @@ function init_site(){
     // --- 4. Untermenü (Akkordeon) ---
     submenuButtons = document.querySelectorAll('.submenu-btn');
 	
-	table = new Tabulator("#example-table", {
+	//tablel_data
+	
+	table = new Tabulator("#id_data_table", {
     data: tableData,
         layout: "fitColumns",
         placeholder: "Lade Daten...",
@@ -284,9 +323,10 @@ function init_site(){
 			}
 
 			// KRITISCH: Wenn die Tabelle sichtbar wird, muss Tabulator das Layout neu berechnen
-			if(targetId === "Example1") {
-				initTable();
-				console.log("draw");
+			if(targetId === "target_id_data_table") {
+				
+				init_data_table();
+				active_section = "target_id_data_table";
 			}
 		});
 	});
