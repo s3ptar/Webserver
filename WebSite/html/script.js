@@ -17,6 +17,18 @@
 * Informations
 ***********************************************************************/
 //https://www.dyclassroom.com/c/c-pointers-and-two-dimensional-array
+/* Startet ein Intervall, das alle 1 Sekunde ausgeführt wird
+let counter = 0;
+const intervalId = setInterval(() => {
+    counter++;
+    console.log(`Zähler: ${counter}`);
+
+    // Bedingung zum Stoppen
+    if (counter >= 5) {
+        clearInterval(intervalId); // Intervall stoppen
+        console.log("Intervall gestoppt.");
+    }
+}, 1000);*/
 /***********************************************************************
 * Declarations
 ***********************************************************************/
@@ -62,6 +74,10 @@ var tableData = [
     {id:4, name:"Datenbank Migration", progress:80, status:"Testphase", date:"05.01.2024"},
 ];
 
+var date_for_wifi = [
+    {id:1, ssid:"WifiEins", pass:"IstGeheim", comment:"Home", mode:"AP"},
+    {id:2, ssid:"WifiDeins", pass:"AuchGeheim", comment:"Garten", mode:"STA"},
+];
 
 
 var active_section = "";
@@ -134,6 +150,8 @@ function draw_chart() {
         //setTimeout(() => { data_table.redraw(true); }, 50);
 }
 
+
+
 /***********************************************************************
 *! \fn          init_data_table()
 *  \brief       build log table
@@ -142,12 +160,11 @@ function draw_chart() {
 *  \return      none
 ***********************************************************************/
 function init_data_table() {
-
     if (typeof data_table  !== 'undefined') {
 		
 		switch (active_section){
 			
-			case "target_id_data_table":{
+			case "example":{
                 // load first table data
 				tabellen_daten = [
 					{Time:"2026-01-01", message:"Web-App Alpha",  status:"Abgeschlossen"},
@@ -165,12 +182,28 @@ function init_data_table() {
 				});
 			    break;
 			}
+			case "wifi":{
+                // load first table data
+				data_table = new Tabulator("#id_data_table", {
+					data: date_for_wifi,
+					history:true,
+					layout: "fitColumns",
+					placeholder: "Lade Daten...",
+					rowHeader:{formatter:"rownum", headerSort:false, hozAlign:"center", resizable:true, frozen:true},
+					columns: [
+						{title:"SSID Name", field:"ssid", widthGrow:2, editor:"input", editorParams:{type:"password"}},
+						{title:"Password", field:"pass", editor:"input"},
+						{title:"Modus", field:"mode", editor:"list", editorParams:{values:{"ap":"AP", "sta":"Client"}}},
+						{title:"Kommentar", field:"comment", editor:"input"},
+					],
+				});
+			    break;
+			}
 			default:{
 			}
 		}
 		
-        
-        //setTimeout(() => { data_table.redraw(true); }, 50);
+        setTimeout(() => { data_table.redraw(true); }, 50);
     } else {
         // Wenn sie schon existiert, nur neu zeichnen
         setTimeout(() => { data_table.redraw(true); }, 50);
@@ -236,7 +269,7 @@ function Start(status) {
 
     setInterval(updateClock, 1000);
 	
-	setInterval(get_periodic_data, 5000); 
+	//setInterval(get_periodic_data, 5000); 
     
 }
 
@@ -381,6 +414,14 @@ function init_site(){
 		});
 	});
 	
+
+	/***********************************************************************
+	*  \brief       //undo button
+	***********************************************************************/
+    document.getElementById("history-undo").addEventListener("click", function(){
+        data_table.undo();
+    });
+	
 	/***********************************************************************
 	*  \brief       navLinks menuToggle
 	***********************************************************************/
@@ -390,7 +431,7 @@ function init_site(){
         
 			const targetId = link.getAttribute('data-target');
 			
-			active_section = targetId;
+			active_section = link.getAttribute('data-content');
 
 			// --- HIGHLIGHT LOGIK ---
 			// 1. Entferne die aktive Klasse von allen Links
