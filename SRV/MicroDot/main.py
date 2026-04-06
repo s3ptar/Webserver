@@ -22,6 +22,9 @@ import logging
 from logging.handlers import RotatingFileHandler
 import sys
 from pathlib import Path
+import threading
+import time
+import json
 
 """#####################################################################
 # Declarations
@@ -77,6 +80,27 @@ async def favicon(request):
 async def log_request(request):
     logger.info(f"{request.method} {request.path}")
 
+# 1. FUNKTION: Daten an das Frontend SENDEN
+@app.route('/api/data', methods=['GET'])
+async def get_data(request):
+    # Beispiel-Datenquelle im Hauptprogramm
+    sensor_daten = {"temperatur": 22.5, "feuchtigkeit": 45}
+    logger.info("Daten vom Frontend angefragt")
+    # Wir senden das Dictionary als JSON zurück
+    return sensor_daten, 200, {'Content-Type': 'application/json'}
+
+# 2. FUNKTION: Daten vom Frontend EMPFANGEN
+@app.route('/api/settings', methods=['POST'])
+async def post_data(request):
+    # Die Daten vom Frontend liegen in request.json
+    empfangene_daten = request.json
+    logger.info("Daten vom Frontend empfangen: {}".format(empfangene_daten))
+    
+    # Hier könntest du z.B. eine LED schalten: 
+    # if empfangene_daten.get('led') == 'on': led.on()
+    
+    return {'status': 'erfolgreich gespeichert'}, 200
+
 
 """#####################################################################
 #! @fn           init_app()
@@ -130,9 +154,26 @@ def init_app():
 
     return logger
 
+"""#####################################################################
+#! @fn           run_server
+#  @ brief       Server Funktion für den Thread
+#  @ param       none
+#  @ exception   none
+#  @ return      none
+#####################################################################"""
+def run_server():
+    logger.info("Webserver-Thread wird gestartet...")
+    # debug=True kann in Threads manchmal Probleme mit Signal-Handlern machen,
+    # daher im Thread oft besser auf False oder vorsichtig nutzen.
+    # app.run(host='0.0.0.0', port=5000, debug=False)
+    try:
+        app.run(debug=True, port=5000)
+    except Exception as e:
+        log.critical(f"Server abgestürzt: {e}")
+
 
 """#####################################################################
-#! @fn          int main(){
+#! @fn           int main(){
 #  @ brief       start up function
 #  @ param       none
 #  @ exception   none
@@ -142,7 +183,26 @@ if __name__ == '__main__':
     log = init_app()
     log.info("Starting $__name__")
     log.info("Starte Microdot Server auf Port 5000...")
+
+    # 1. Thread erstellen
+    server_thread = threading.Thread(target=run_server)
+    
+    # 2. Thread als Daemon markieren (beendet sich, wenn das Hauptprogramm stoppt)
+    server_thread.daemon = True
+    
+    # 3. Thread starten
+    server_thread.start()
+
+    logger.info("Hauptprogramm läuft weiter...")
+
+    # Hier kannst du nun parallel zum Webserver andere Dinge tun
     try:
-        app.run(debug=True, port=5000)
-    except Exception as e:
-        log.critical(f"Server abgestürzt: {e}")
+        count = 0
+        while True:
+            count += 1
+            # logger.info(f"Haupt-Loop läuft noch... Durchgang {count}")
+            time.sleep(30)  # Simuliert Arbeit im Hauptprogramm
+    except KeyboardInterrupt:
+        logger.info("Programm wird beendet...")
+
+    
