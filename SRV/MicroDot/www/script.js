@@ -33,6 +33,13 @@ const intervalId = setInterval(() => {
 * Declarations
 ***********************************************************************/
 
+/***********************************************************************
+* Test Data
+***********************************************************************/
+var date_for_wifi = [
+    {id:1, ssid:"WifiEins", pass:"IstGeheim", comment:"Home", mode:"AP"},
+    {id:2, ssid:"WifiDeins", pass:"AuchGeheim", comment:"Garten", mode:"STA"},
+];
 
 /***********************************************************************
 * Constant
@@ -74,10 +81,6 @@ var tableData = [
     {id:4, name:"Datenbank Migration", progress:80, status:"Testphase", date:"05.01.2024"},
 ];
 
-var date_for_wifi = [
-    {id:1, ssid:"WifiEins", pass:"IstGeheim", comment:"Home", mode:"AP"},
-    {id:2, ssid:"WifiDeins", pass:"AuchGeheim", comment:"Garten", mode:"STA"},
-];
 
 
 var active_section = "";
@@ -109,7 +112,7 @@ function draw_chart() {
 		
 	switch (active_section){
 		
-	    case "target_id_chart":{
+	    case "example":{
             dataChart = new Chart(ctx, {
 			    type: 'bar', // Typ: bar, line, pie, radar, etc.
 				data: {
@@ -146,11 +149,15 @@ function draw_chart() {
 		}
 	}
 		
-        
-        //setTimeout(() => { data_table.redraw(true); }, 50);
 }
 
-
+/***********************************************************************
+*  \brief       undo button for table
+*  \param       none
+*  \exception   none
+*  \return      none
+***********************************************************************/
+//undo button
 
 /***********************************************************************
 *! \fn          init_data_table()
@@ -223,7 +230,7 @@ function get_periodic_data() {
 		switch (active_section){
 			
 			case "target_id_data_table":{
-				console.log("target_id_data_table");
+				//console.log("target_id_data_table");
 				// Beispieldaten
 				var tabellen_daten = [
 					{Time:new Date().toISOString(), message:"Web-App Alpha",  status:"Abgeschlossen"},
@@ -253,9 +260,6 @@ function updateClock() {
     document.getElementById('datetime').textContent = now.toLocaleString('de-DE', options);
 }
 
-
-
- 
  /***********************************************************************
 *! \fn          function Start(status)
 *  \brief       AFTER PAGE LOADS CALL YOUR SCRIPTS HERE
@@ -371,20 +375,30 @@ function init_site(){
 
     // --- 4. Untermenü (Akkordeon) ---
     submenuButtons = document.querySelectorAll('.submenu-btn');
+
+    // --- undo button ---
+	document.getElementById("history-undo").addEventListener("click", function(){
+        data_table.undo();
+    });
 	
 	//tabellen_daten
 	
-	table = new Tabulator("#id_data_table", {
+	data_table = new Tabulator("#id_data_table", {
     data: tableData,
         layout: "fitColumns",
         placeholder: "Lade Daten...",
-        columns: [
+        columns: [/*
             {title:"Projektname", field:"name", widthGrow:2},
             {title:"Fortschritt", field:"progress", formatter:"progress", sorter:"number"},
             {title:"Status", field:"status", hozAlign:"center"},
+						*/
+						{title:"SSID Name", field:"ssid", widthGrow:2},
+						{title:"Password", field:"pass"},
+						{title:"Kommentar", field:"comment"},
+					
         ],
 	});
-	
+	/*
 	data_table = new Tabulator("#id_data_table", {
 		data: tableData,
         layout: "fitColumns",
@@ -394,7 +408,7 @@ function init_site(){
             {title:"Fortschritt", field:"progress", formatter:"progress", sorter:"number"},
             {title:"Status", field:"status", hozAlign:"center"},
         ],
-	});
+	});*/
 	
 	
 	ctx = document.getElementById('id_chart_table').getContext('2d');
@@ -414,14 +428,6 @@ function init_site(){
 		});
 	});
 	
-
-	/***********************************************************************
-	*  \brief       //undo button
-	***********************************************************************/
-    document.getElementById("history-undo").addEventListener("click", function(){
-        data_table.undo();
-    });
-	
 	/***********************************************************************
 	*  \brief       navLinks menuToggle
 	***********************************************************************/
@@ -430,7 +436,8 @@ function init_site(){
 			e.preventDefault(); // Verhindert das Springen der Seite
         
 			const targetId = link.getAttribute('data-target');
-			
+			//console.log(link.getAttribute('data-target'));
+			//console.log(link.getAttribute('data-content'));
 			active_section = link.getAttribute('data-content');
 
 			// --- HIGHLIGHT LOGIK ---
@@ -461,12 +468,11 @@ function init_site(){
 			    draw_chart();
 								
 			}
+
 		});
 	});
 	
 }
-
-
 
 /*****************************************************************************************/
 
