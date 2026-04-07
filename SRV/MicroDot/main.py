@@ -49,47 +49,50 @@ default_config = {}
 # Constant
 #####################################################################"""
 
-
+date_for_wifi = [
+    {"id":"1", "ssid":"WifiZei", "pass":"IstGeheim", "comment":"Home", "mode":"AP"},
+    {"id":"2", "ssid":"WifiDrei", "pass":"AuchGeheim", "comment":"Garten", "mode":"STA"}
+]
 
 """#####################################################################
 # Local Funtions
 #####################################################################"""
 
-# Hauptroute für die HTML-Datei
+"""#####################################################################
+#  @ brief       Hauptroute für die HTML-Datei
+#####################################################################"""
 @app.route('/')
 async def index(request):
     return send_file('www/index.html')
 
-# Route für statische Dateien (CSS, JS)
-@app.route('/<path:path>')
-async def static(request, path):
-    #return send_file('www/' + path)
-    full_path = 'www/' + path
-    try:
-        return send_file(full_path)
-    except Exception as e:
-        logger.error(f"Fehler beim Laden von {full_path}: {e}")
-        return 'Datei nicht gefunden', 404
-
+"""#####################################################################
+#  @ brief       Favicon senden
+#####################################################################"""
 @app.route('/favicon.ico')
 async def favicon(request):
     return send_file('www/favicon.ico')
 
-# Request-Logging (optional, loggt jede Anfrage)
+"""#####################################################################
+#  @ brief       Request-Logging (optional, loggt jede Anfrage)
+#####################################################################"""
 @app.before_request
 async def log_request(request):
     logger.info(f"{request.method} {request.path}")
 
-# 1. FUNKTION: Daten an das Frontend SENDEN
-@app.route('/api/data', methods=['GET'])
+"""#####################################################################
+#  @ brief       Daten ans Frontend senden
+#####################################################################"""
+@app.route('/api/wifidata', methods=['GET'])
 async def get_data(request):
     # Beispiel-Datenquelle im Hauptprogramm
-    sensor_daten = {"temperatur": 22.5, "feuchtigkeit": 45}
+     #sensor_daten = {"temperatur": 22.5, "feuchtigkeit": 45}
     logger.info("Daten vom Frontend angefragt")
     # Wir senden das Dictionary als JSON zurück
-    return sensor_daten, 200, {'Content-Type': 'application/json'}
+    return date_for_wifi, 200, {'Content-Type': 'application/json'}
 
-# 2. FUNKTION: Daten vom Frontend EMPFANGEN
+"""#####################################################################
+#  @ brief       Daten vom Frontend EMPFANGEN
+#####################################################################"""
 @app.route('/api/settings', methods=['POST'])
 async def post_data(request):
     # Die Daten vom Frontend liegen in request.json
@@ -100,6 +103,19 @@ async def post_data(request):
     # if empfangene_daten.get('led') == 'on': led.on()
     
     return {'status': 'erfolgreich gespeichert'}, 200
+
+"""#####################################################################
+#  @ brief       Route für statische Dateien (CSS, JS)
+#####################################################################"""
+@app.route('/<path:path>')
+async def static(request, path):
+    #return send_file('www/' + path)
+    full_path = 'www/' + path
+    try:
+        return send_file(full_path)
+    except Exception as e:
+        logger.error(f"Fehler beim Laden von {full_path}: {e}")
+        return 'Datei nicht gefunden', 404
 
 
 """#####################################################################

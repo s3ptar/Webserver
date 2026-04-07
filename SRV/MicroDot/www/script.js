@@ -82,7 +82,6 @@ var tableData = [
 ];
 
 
-
 var active_section = "";
 var data_table;
 var tabellen_daten;
@@ -152,12 +151,26 @@ function draw_chart() {
 }
 
 /***********************************************************************
-*  \brief       undo button for table
+*  \brief       async function fetchSensorData
 *  \param       none
 *  \exception   none
 *  \return      none
 ***********************************************************************/
-//undo button
+// 1. FUNKTION: Daten vom Server ABRUFEN (GET)
+async function fetchSensorData() {
+    try {
+        const response = await fetch('/api/wifidata');
+        const data = await response.json();
+        console.log("Sensor-Daten erhalten:", data);
+        
+        // Beispiel: Daten im HTML anzeigen
+        // document.getElementById('status').innerText = `Temperatur: ${data.temperatur}°C, Luftfeuchte: ${data.feuchtigkeit}%`;
+		data_table.setData(data); // Tabulator mit neuen Daten aktualisieren
+		//data_table.redraw(true);
+    } catch (error) {
+        console.error("Fehler beim Abrufen der Daten:", error);
+    }
+}
 
 /***********************************************************************
 *! \fn          init_data_table()
@@ -191,6 +204,7 @@ function init_data_table() {
 			}
 			case "wifi":{
                 // load first table data
+                //fetchSensorData(); // Beispiel: Daten vom Server abrufen
 				data_table = new Tabulator("#id_data_table", {
 					data: date_for_wifi,
 					history:true,
@@ -204,6 +218,7 @@ function init_data_table() {
 						{title:"Kommentar", field:"comment", editor:"input"},
 					],
 				});
+				fetchSensorData();
 			    break;
 			}
 			default:{
