@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infrastruktur Designer Pro</title>
+    <style>
+        :root {
+            --primary: #4facfe;
+            --bg: #f1f5f9;
+            --panel: #ffffff;
+            --text: #1e293b;
+            --border: #cbd5e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .editor-panel {
+            background: var(--panel);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 950px;
+            margin-bottom: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        input, select, button {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        button {
+            cursor: pointer;
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        button:hover { opacity: 0.9; }
+
+        .btn-sec { background: #64748b; }
+        .btn-danger { background: #ef4444; }
+
+        canvas {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+            cursor: crosshair;
+        }
+
+        #groupFields {
+            display: none;
+            margin-bottom: 15px;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .hint {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="editor-panel">
+        <div class="grid">
+            <input type="text" id="objId" placeholder="ID (z.B. S1)">
+            <input type="text" id="objLabel" placeholder="Label (Text)">
+            <select id="creationType" onchange="toggleGroupFields()">
+                <option value="icon">Icon</option>
+                <option value="circle">Kreis</option>
+                <option value="group">Gruppe</option>
+            </select>
+            <select id="objIcon">
+                <option value="pc">Server / PC</option>
+                <option value="database">Datenbank</option>
+                <option value="cloud">Cloud</option>
+                <option value="monitor">Monitor</option>
+            </select>
+            <select id="objParent">
+                <option value="root">Hauptebene</option>
+            </select>
+            <button onclick="addNewElement()">Hinzufügen</button>
+        </div>
+        
+        <div id="groupFields">
+            <input type="number" id="groupW" value="300" placeholder="Breite">
+            <input type="number" id="groupH" value="200" placeholder="Höhe">
+            <span class="hint">Nur für Gruppen relevant</span>
+        </div>
+
+        <div class="actions">
+            <button class="btn-sec" onclick="autoLayoutAll()">Auto-Layout</button>
+            <button class="btn-sec" onclick="exportData()">Export (.json)</button>
+            <button class="btn-sec" onclick="document.getElementById('importFile').click()">Import</button>
+            <input type="file" id="importFile" hidden onchange="importData(event)">
+            <button class="btn-danger" onclick="clearData()">Alles löschen</button>
+        </div>
+    </div>
+
+    <canvas id="graphCanvas" width="1000" height="650"></canvas>
+
+    <script src="Network.js"></script>
+</body>
+</html>

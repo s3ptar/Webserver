@@ -1,0 +1,56 @@
+[
+  {
+    "id": "G1",
+    "isGroup": true,
+    "name": "Haupt-Rechenzentrum",
+    "width": 500,
+    "height": 400,
+    "children": [
+      {
+        "id": "S1",
+        "label": "Main Server",
+        "type": "icon",
+        "iconKey": "pc"
+      },
+      {
+        "id": "M1",
+        "label": "Admin Konsole",
+        "type": "icon",
+        "iconKey": "monitor"
+      },
+      {
+        "id": "G2",
+        "isGroup": true,
+        "name": "Sicherheits-Zone",
+        "width": 300,
+        "height": 250,
+        "children": [
+          {
+            "id": "DB1",
+            "label": "SQL Master",
+            "type": "icon",
+            "iconKey": "database"
+          },
+          {
+            "id": "DB2",
+            "label": "SQL Backup",
+            "type": "icon",
+            "iconKey": "database"
+          },
+          {
+            "id": "PC1",
+            "label": "Workstation 01",
+            "type": "icon",
+            "iconKey": "pc"
+          },
+          {
+            "id": "PC2",
+            "label": "Workstation 02",
+            "type": "icon",
+            "iconKey": "pc"
+          }
+        ]
+      }
+    ]
+  }
+]
