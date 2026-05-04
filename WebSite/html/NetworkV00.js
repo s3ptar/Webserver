@@ -21,7 +21,7 @@ let elements = [
                 id: "G2", isGroup: true, name: "Sub-Netz (G2)", 
                 relX: 80, relY: 40, width: 220, height: 150, 
                 children: [
-                    { id: "DB1", type: "circle", relX: -50, relY: 0, radius: 20, color: '#f093fb', label: "Database" },
+                    { id: "DB1", type: "circle", relX: -50, relY: 0, radius: 20, color: '#f093fb', label: "Database für einen blabla blab" },
                     { id: "FW1", type: "rect", relX: 50, relY: 0, w: 60, h: 40, color: '#f6ad55', label: "Firewall" }
                 ]
             }
@@ -55,7 +55,7 @@ function load() {
 }
 
 function save() { 
-    localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(elements)); 
+    localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(elements));
 }
 
 // --- HILFSFUNKTIONEN ---
@@ -100,9 +100,10 @@ function getMousePos(e) {
 // --- EVENT HANDLING ---
 
 canvas.addEventListener('mousedown', (e) => {
+	
     const pos = getMousePos(e);
     dragTarget = null;
-	/* V01*/
+	// V01
 	function findHandle(list, px=0, py=0) {
         for (let el of list) {
             const x = el.relX !== undefined ? px + el.relX : el.x;
@@ -204,15 +205,17 @@ window.addEventListener('mousemove', (e) => {
         const diffX = (pos.x - dragTarget.startX) * 2; // *2, da von Mitte aus skaliert wird
         const diffY = (pos.y - dragTarget.startY) * 2;
 
-        el.width = Math.max(50, dragTarget.startW + diffX);
-        el.height = Math.max(50, dragTarget.startH + diffY);
+        //el.width = Math.max(50, dragTarget.startW + diffX);
+        //el.height = Math.max(50, dragTarget.startH + diffY);
+		dragTarget.obj.width = Math.max(50, dragTarget.startW + diffX);
+        dragTarget.obj.height = Math.max(50, dragTarget.startH + diffY);
     } else {
 
 
         if (!dragTarget.actualParent) {
             // Root-Elemente: x und y sind absolute Canvas-Koordinaten
-            el.x = Math.round(pos.x);
-            el.y = Math.round(pos.y);
+            dragTarget.obj.x = Math.round(pos.x);
+            dragTarget.obj.y = Math.round(pos.y);
         } else {
             // Kind-Elemente: relX und relY sind relativ zur Mitte des Parents
             const p = dragTarget.actualParent;
@@ -223,7 +226,10 @@ window.addEventListener('mousemove', (e) => {
     
             // Clamping (Berechnung der Grenzen)
             //let hw, hh;
-            if (el.isGroup) { hw = el.width / 2; hh = el.height / 2; }
+ 
+			if (dragTarget.obj.isGroup) { 
+			    hw = dragTarget.obj.width / 2; hh = dragTarget.obj.height / 2; 
+			}
             //else if (el.type === "icon") { hw = hh = (el.size || 40) / 2; }
             //else { hw = hh = (el.radius || 25); }
 			else { hw = hh = half}
@@ -234,8 +240,12 @@ window.addEventListener('mousemove', (e) => {
             // Werte begrenzen und im Objekt speichern
             //el.relX = Math.round(Math.max(-limX, Math.min(limX, newRelX)));
             //el.relY = Math.round(Math.max(-limY, Math.min(limY, newRelY)));
-			el.relX = Math.round(Math.max(-limX, Math.min(limX, pos.x - dragTarget.px)));
-			el.relY = Math.round(Math.max(-limY, Math.min(limY, pos.y - dragTarget.py)))
+			let min_pos = Math.min(limX, pos.x - dragTarget.px);
+			let max_pos = Math.max(-limX, min_pos)
+			let newRX = Math.round(max_pos);
+			dragTarget.obj.relX = newRX;
+			dragTarget.obj.relY = Math.round(Math.max(-limY, Math.min(limY, pos.y - dragTarget.py)));
+
         }
 	}
     
@@ -250,14 +260,69 @@ window.addEventListener('mouseup', () => {
 		//fehler bei local storage
         //saveToLocalStorage(); // Jetzt erst die gesamte Struktur persistent speichern
 		save();
+		
         console.log("Struktur aktualisiert:", elements); // Zur Kontrolle in der Konsole
     }
     dragTarget = null;
 });
 
+
+
+// --- AUTO LAYOUT ---
+
+function layoutGroup(g) {
+    if(!g.children || g.children.length === 0) return;
+    const spacingX = CONFIG.BASE_SIZE + CONFIG.PADDING;
+    const spacingY = CONFIG.BASE_SIZE + CONFIG.PADDING + 15;
+    const cols = Math.max(1, Math.floor((g.width - 40) / spacingX));
+    
+    const rows = Math.ceil(g.children.length / cols);
+    const reqH = (rows * spacingY) + 40;
+    
+    // Gruppe wächst automatisch mit
+    if(g.height < reqH) g.height = reqH;
+
+    g.children.forEach((c, i) => {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        c.relX = Math.round(-(g.width/2) + 40 + (col * spacingX));
+        c.relY = Math.round(-(g.height/2) + 40 + (row * spacingY));
+    });
+}
+
+function autoLayoutAll() {
+    const process = (list) => list.forEach(el => {
+        if(el.isGroup) { 
+            process(el.children); 
+            layoutGroup(el); 
+        }
+    });
+    process(elements);
+    save(); 
+    draw();
+}
+
 // --- ZEICHEN-LOGIK ---
 
+function auto_layout(list, parentX = 0, parentY = 0){
+	
+	// select each element
+	list.forEach(el => {
+		
+		if (el.isGroup) {
+			auto_layout(el.children, x, y);
+		}else{
+		}
+		
+	});
+	
+	
+}
+
+
 function draw() {
+	
+	
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     // 1. Verbindungen
@@ -344,14 +409,40 @@ function drawShape(x, y, obj) {
     drawMultilineText(ctx, obj.label, x, textStartY, CONFIG.LINE_HEIGHT);
 }
 
-function drawMultilineText(ctx, text, x, y, lineHeight) {
+function drawMultilineText(ctx, text, x, y, lineHeight, maxLength=13) {
     // Teilt den Text bei Leerzeichen auf
-    const lines = text.split(';'); 
+     
+	lines = [];
+	
+	if (text.length < maxLength){
+		lines = text.split(';');
+	}else{
+	
+	    // ------------------- neuer teil ------------------------------
+	    
+	    while (text.length > 0) {
+            if (text.length <= maxLength) {
+                lines.push(text);
+                break;
+            }
+	    	// Finde das letzte Leerzeichen innerhalb der 50-Zeichen-Grenze
+            let splitIndex = text.lastIndexOf(' ', maxLength);
+	    	// Falls kein Leerzeichen gefunden wurde, erzwinge den Split bei maxLength
+            if (splitIndex === -1) {
+              splitIndex = maxLength;
+            }
+	    	lines.push(text.substring(0, splitIndex).trim());
+            text = text.substring(splitIndex).trim();
+	    }
+	}
+	
+	//--------------------------------------------------------------
+
     
     lines.forEach((line, index) => {
         // Zeichnet jede Zeile einzeln, jeweils um 'lineHeight' nach unten versetzt
         ctx.fillText(line, x, y + (index * lineHeight));
     });
 }
-
+autoLayoutAll();
 draw();
