@@ -24,6 +24,14 @@ let elements = [
                     { id: "DB1", type: "circle", relX: -50, relY: 0, radius: 20, color: '#f093fb', label: "Database für einen blabla blab" },
                     { id: "FW1", type: "rect", relX: 50, relY: 0, w: 60, h: 40, color: '#f6ad55', label: "Firewall" }
                 ]
+            },
+			{ 
+                id: "G3", isGroup: true, name: "Sub-Netz (G3)", 
+                relX: 80, relY: 40, width: 220, height: 150, 
+                children: [
+                    { id: "DB3", type: "circle", relX: -50, relY: 0, radius: 20, color: '#f093fb', label: "Database für einen blabla blab" },
+                    { id: "FW3", type: "rect", relX: 50, relY: 0, w: 60, h: 40, color: '#f6ad55', label: "Firewall" }
+                ]
             }
         ]
     },
@@ -271,7 +279,8 @@ window.addEventListener('mouseup', () => {
 // --- AUTO LAYOUT ---
 
 function layoutGroup(g) {
-    if(!g.children || g.children.length === 0) return;
+    if(!g.children || g.children.length === 0) 
+		return;
     const spacingX = CONFIG.BASE_SIZE + CONFIG.PADDING;
     const spacingY = CONFIG.BASE_SIZE + CONFIG.PADDING + 15;
     const cols = Math.max(1, Math.floor((g.width - 40) / spacingX));
@@ -285,8 +294,15 @@ function layoutGroup(g) {
     g.children.forEach((c, i) => {
         const col = i % cols;
         const row = Math.floor(i / cols);
-        c.relX = Math.round(-(g.width/2) + 40 + (col * spacingX));
-        c.relY = Math.round(-(g.height/2) + 40 + (row * spacingY));
+		if(c.isGroup){
+			//for groups
+			c.relX = Math.round(-(g.width/2) + c.width/2 + 75 + (col * (0 + CONFIG.PADDING + 0)));
+            c.relY = Math.round(-(g.height/2) + c.height/2 + 40 + (row * (c.height/2 + CONFIG.PADDING + 15)));
+		}else{
+			//objects
+            c.relX = Math.round(-(g.width/2) + 50 + (col * spacingX));
+            c.relY = Math.round(-(g.height/2) + 40 + (row * spacingY));
+		}
     });
 }
 
